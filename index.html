@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirWatch - Air Quality Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>🌫️ AirWatch</h1>
+      <p>Live air quality, 3-day forecast and health advice for any city</p>
+    </div>
+
+    <form id="search-form" autocomplete="off">
+      <div class="search-box">
+        <input id="search-input" type="search" placeholder="Search a city (e.g. Hanoi, Delhi, London)"
+               aria-label="Search city" aria-autocomplete="list" aria-controls="suggestions">
+        <ul id="suggestions" class="suggestions hidden" role="listbox"></ul>
+      </div>
+      <button type="submit">Search</button>
+      <button type="button" id="locate-btn" class="ghost">📍 My location</button>
+    </form>
+  </header>
+
+  <main>
+    <p id="error" class="error hidden" role="alert"></p>
+    <p id="loading" class="loading hidden" role="status">Loading air quality data...</p>
+
+    <div id="dashboard" class="hidden">
+      <!-- Row 1: hero + side cards -->
+      <section class="row-top">
+        <article id="hero" class="card hero">
+          <div class="hero-head">
+            <div>
+              <h2 id="city-name"></h2>
+              <p id="city-sub" class="muted-on-accent"></p>
+            </div>
+            <div class="seg" role="group" aria-label="AQI standard">
+              <button type="button" id="std-us" class="active">US AQI</button>
+              <button type="button" id="std-eu">European AQI</button>
+            </div>
+          </div>
+
+          <div class="hero-body">
+            <div class="aqi-number" id="aqi-number">--</div>
+            <div>
+              <p id="aqi-label" class="aqi-label"></p>
+              <p id="aqi-advice" class="aqi-advice"></p>
+              <p id="aqi-dominant" class="muted-on-accent"></p>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button type="button" id="fav-btn" class="on-accent">☆ Save city</button>
+            <button type="button" id="refresh-btn" class="on-accent">⟳ Refresh</button>
+          </div>
+        </article>
+
+        <div class="side">
+          <article class="card" id="weather-card">
+            <h3>Weather now</h3>
+            <div class="weather">
+              <span id="wx-icon" class="wx-icon">—</span>
+              <div>
+                <p id="wx-temp" class="wx-temp">--</p>
+                <p id="wx-desc" class="muted"></p>
+              </div>
+            </div>
+            <dl class="wx-stats">
+              <div><dt>Humidity</dt><dd id="wx-hum">--</dd></div>
+              <div><dt>Wind</dt><dd id="wx-wind">--</dd></div>
+            </dl>
+          </article>
+
+          <article class="card">
+            <h3>Plan your day (next 24 h)</h3>
+            <p class="best-row"><span class="dot good"></span><span>Cleanest air</span><strong id="best-time">--</strong></p>
+            <p class="best-row"><span class="dot bad"></span><span>Worst air</span><strong id="worst-time">--</strong></p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Row 2: pollutants -->
+      <section class="card">
+        <div class="card-head">
+          <h3>Pollutants</h3>
+          <p class="muted">Bar shows concentration compared with the WHO 2021 guideline (marker = 1×)</p>
+        </div>
+        <div id="pollutants" class="pollutants"></div>
+      </section>
+
+      <!-- Row 3: chart -->
+      <section class="card">
+        <div class="card-head">
+          <h3>AQI trend and forecast</h3>
+          <p class="muted">Past 24 h → next 48 h. Hover or touch the chart for details.</p>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 800 280" role="img" aria-label="Air quality index over time"></svg>
+          <div id="chart-tip" class="chart-tip hidden"></div>
+        </div>
+      </section>
+
+      <!-- Row 4: advice + legend -->
+      <section class="row-two">
+        <article class="card">
+          <h3>What should I do?</h3>
+          <ul id="activities" class="activities"></ul>
+          <p class="muted small">General guidance only, not medical advice.</p>
+        </article>
+        <article class="card">
+          <h3>AQI scale</h3>
+          <ul id="legend" class="legend"></ul>
+        </article>
+      </section>
+    </div>
+
+    <!-- My cities -->
+    <section class="card" id="fav-section">
+      <div class="card-head">
+        <h3>My cities</h3>
+        <p class="muted">Ranked from most to least polluted</p>
+      </div>
+      <div id="fav-list" class="fav-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    Data: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+    (CAMS air quality model, geocoding and weather). Values are model estimates, not station measurements.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
