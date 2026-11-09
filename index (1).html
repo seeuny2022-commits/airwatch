@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirWatch - Air Quality Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="./" aria-label="AirWatch home">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 22a12 12 0 0 1 24 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <path d="M10 22a6 6 0 0 1 12 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="22" r="2" fill="currentColor"/>
+        </svg>
+        <span class="brand-name">AirWatch</span>
+      </a>
+
+      <form id="search-form" autocomplete="off">
+        <div class="search-box">
+          <input id="search-input" type="search" placeholder="Search a city, e.g. Hanoi, Delhi, London"
+                 aria-label="Search city" aria-autocomplete="list" aria-controls="suggestions">
+          <ul id="suggestions" class="suggestions hidden" role="listbox"></ul>
+        </div>
+        <button type="submit" class="btn primary">Search</button>
+        <button type="button" id="locate-btn" class="btn">Use my location</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p id="error" class="error hidden" role="alert"></p>
+    <p id="loading" class="loading hidden" role="status">Loading air quality data...</p>
+
+    <div id="dashboard" class="hidden">
+
+      <!-- Hero -->
+      <article id="hero" class="hero">
+        <div class="hero-copy">
+          <h1 id="city-name"></h1>
+          <p id="city-sub" class="muted"></p>
+          <p id="aqi-label" class="aqi-label"></p>
+          <p id="aqi-advice" class="aqi-advice"></p>
+          <p id="aqi-dominant" class="dominant"></p>
+          <div class="hero-actions">
+            <button type="button" id="fav-btn" class="btn">+ Save city</button>
+            <button type="button" id="refresh-btn" class="btn">Refresh</button>
+          </div>
+        </div>
+
+        <div class="hero-gauge">
+          <div class="seg" role="group" aria-label="AQI standard">
+            <button type="button" id="std-us" class="active">US AQI</button>
+            <button type="button" id="std-eu">European AQI</button>
+          </div>
+          <div class="gauge-wrap">
+            <svg id="gauge" viewBox="0 0 300 170" role="img" aria-label="Air quality gauge"></svg>
+            <div class="gauge-read">
+              <div id="aqi-number" class="aqi-number">--</div>
+              <div id="aqi-unit" class="aqi-unit">US AQI</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Quick facts: weather + best/worst hour -->
+      <dl class="facts">
+        <div class="fact">
+          <dt>Temperature</dt>
+          <dd><span id="wx-temp">--</span><small id="wx-desc"></small></dd>
+        </div>
+        <div class="fact"><dt>Humidity</dt><dd id="wx-hum">--</dd></div>
+        <div class="fact"><dt>Wind</dt><dd id="wx-wind">--</dd></div>
+        <div class="fact"><dt><span class="dot good"></span>Cleanest hour, next 24 h</dt><dd id="best-time">--</dd></div>
+        <div class="fact"><dt><span class="dot bad"></span>Worst hour, next 24 h</dt><dd id="worst-time">--</dd></div>
+      </dl>
+
+      <!-- Pollutants -->
+      <section class="block">
+        <div class="block-head">
+          <h2>Pollutants</h2>
+          <p class="muted">Each bar is measured against the WHO 2021 guideline. The tick marks 1×.</p>
+        </div>
+        <div id="pollutants" class="pollutants"></div>
+      </section>
+
+      <!-- Chart -->
+      <section class="block">
+        <div class="block-head">
+          <h2>Past 24 hours and next 48 hours</h2>
+          <p class="muted">Hover or touch the chart for each hour.</p>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 800 280" role="img" aria-label="Air quality index over time"></svg>
+          <div id="chart-tip" class="chart-tip hidden"></div>
+        </div>
+      </section>
+
+      <!-- Advice + scale -->
+      <section class="block two">
+        <div>
+          <div class="block-head"><h2>What should I do?</h2></div>
+          <ul id="activities" class="activities"></ul>
+          <p class="muted small">General guidance only, not medical advice.</p>
+        </div>
+        <div>
+          <div class="block-head"><h2>AQI scale</h2></div>
+          <ul id="legend" class="legend"></ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- My cities -->
+    <section class="block" id="fav-section">
+      <div class="block-head">
+        <h2>My cities</h2>
+        <p class="muted">Ranked from most to least polluted</p>
+      </div>
+      <div id="fav-list" class="fav-list"></div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Data from <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+    (CAMS air quality model, geocoding and weather). Values are model estimates, not station measurements.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
